@@ -32,10 +32,10 @@ docker compose up -d     # levanta db + mosquitto + backend + frontend + mcp + s
 
 | Rol | Persona | Rama | Deliverable |
 |---|---|---|---|
-| **FE-1** | Landing + Mapa público | `feat/landing` | Hero GSAP + mapa Leaflet Santander + filtros |
-| **FE-2** | Dashboard + Perfil + QR | `feat/dashboard` | Vistas de lote + gráficas IoT + chat + perfil público |
-| **BE-1** | Django API + Auth | `feat/api` | Models, seed, JWT, endpoints REST |
-| **BE-2** | MQTT + MCP + Simulador | `feat/mqtt-mcp` | Simulador, worker aiomqtt, FastMCP server |
+| **FE-1 · Paula** | Landing + Mapa público | `feat/landing` | Hero GSAP + mapa Leaflet Santander + filtros |
+| **FE-2 · Keren** | Dashboard + Perfil + QR | `feat/dashboard` | Vistas de lote + gráficas IoT + chat + perfil público |
+| **BE-1 · Nicolas** | Django API + Auth | `feat/api` | Models, seed, JWT, endpoints REST |
+| **BE-2 · Julian** | MQTT + MCP + Simulador | `feat/mqtt-mcp` | Simulador, worker aiomqtt, FastMCP server |
 
 Ver `docs/workflow/` para detalle por persona.
 

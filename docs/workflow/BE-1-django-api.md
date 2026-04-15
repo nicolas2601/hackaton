@@ -1,6 +1,6 @@
-# BE-1 — Django API + Auth + Seed
+# BE-1 — Django API + Auth + Seed · 👨‍💻 Nicolas
 
-> **Persona:** Backend-1 · **Rama:** `feat/api` · **Tiempo:** 2h
+> **Persona:** Nicolas · **Rol:** Backend-1 · **Rama:** `feat/api` · **Tiempo:** 2h
 > **Deliverable:** Modelos, migraciones, JWT, CRUD REST, seed de 5 fincas + usuarios + sensores, endpoint público de fincas.
 
 ## Checklist

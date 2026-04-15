@@ -1,6 +1,6 @@
-# BE-2 — Simulador MQTT + Worker + FastMCP Server
+# BE-2 — Simulador MQTT + Worker + FastMCP Server · 👨‍💻 Julian
 
-> **Persona:** Backend-2 · **Rama:** `feat/mqtt-mcp` · **Tiempo:** 2h
+> **Persona:** Julian · **Rol:** Backend-2 (MQTT + MCP) · **Rama:** `feat/mqtt-mcp` · **Tiempo:** 2h
 > **Deliverable:** Simulador Python publicando MQTT realista + worker Django (aiomqtt) persistiendo en DB + FastMCP server exponiendo 5 tools a LLMs.
 
 ## Checklist

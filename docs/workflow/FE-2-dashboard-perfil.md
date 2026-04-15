@@ -1,6 +1,6 @@
-# FE-2 — Dashboard agricultor + Perfil público + Chat MCP
+# FE-2 — Dashboard agricultor + Perfil público + Chat MCP · 👩‍💻 Keren
 
-> **Persona:** Frontend-2 · **Rama:** `feat/dashboard` · **Tiempo:** 2h
+> **Persona:** Keren · **Rol:** Frontend-2 · **Rama:** `feat/dashboard` · **Tiempo:** 2h
 > **Deliverable:** Dashboard privado del agricultor con gráficas IoT + chat IA + perfil público con QR de trazabilidad.
 
 ## Checklist

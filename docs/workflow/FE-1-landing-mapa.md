@@ -1,6 +1,6 @@
-# FE-1 — Landing + Mapa público
+# FE-1 — Landing + Mapa público · 👩‍💻 Paula
 
-> **Persona:** Frontend-1 · **Rama:** `feat/landing` · **Tiempo:** 2h
+> **Persona:** Paula · **Rol:** Frontend-1 · **Rama:** `feat/landing` · **Tiempo:** 2h
 > **Deliverable:** Landing con hero GSAP de alto impacto + mapa Leaflet con fincas de Santander + filtros.
 
 ## Checklist (orden estricto)
