@@ -62,3 +62,4 @@ mosquitto/log/
 # Backups
 *.bak
 *.orig
+.claude/
