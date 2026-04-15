@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
+    "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
@@ -14,6 +15,7 @@
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@tanstack/react-query": "^5.99.0",
+    "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "gsap": "^3.15.0",
     "leaflet": "^1.9.4",
@@ -23,6 +25,8 @@
     "react-leaflet": "^5.0.0",
     "react-qr-code": "^2.0.18",
     "react-router-dom": "^7.14.1",
+    "recharts": "^2.15.0",
+    "sonner": "^1.7.4",
     "tailwind-merge": "^3.5.0",
     "zustand": "^5.0.12"
   },
@@ -31,6 +35,7 @@
     "@tailwindcss/vite": "^4.2.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
