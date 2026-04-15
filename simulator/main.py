@@ -12,7 +12,7 @@ from datetime import datetime
 
 import aiomqtt
 
-BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mosquitto")
+BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
 BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", "1883"))
 BROKER_USER = os.getenv("MQTT_BROKER_USERNAME", "")
 BROKER_PASS = os.getenv("MQTT_BROKER_PASSWORD", "")

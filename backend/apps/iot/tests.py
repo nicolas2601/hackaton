@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-"""Tests for IoT sensor data endpoints and SSE."""
+"""Tests for IoT sensor data endpoints and MQTT topic parsing."""
 from __future__ import annotations
 
 from decimal import Decimal
@@ -10,6 +9,29 @@ from rest_framework.test import APIClient
 from apps.core.models import User
 from apps.fincas.models import Finca, Lote
 from apps.iot.models import SensorData
+
+
+def _parse_topic(topic: str):
+    # cacao/finca/<finca>/lote/<lote>/<tipo>
+    parts = topic.split("/")
+    return int(parts[4]), parts[5]
+
+
+class ParseTopicTests(TestCase):
+    def test_parse_topic_basic(self) -> None:
+        lote, tipo = _parse_topic("cacao/finca/1/lote/2/temp_suelo")
+        self.assertEqual(lote, 2)
+        self.assertEqual(tipo, "temp_suelo")
+
+    def test_parse_topic_hum_secado(self) -> None:
+        lote, tipo = _parse_topic("cacao/finca/3/lote/7/hum_secado")
+        self.assertEqual(lote, 7)
+        self.assertEqual(tipo, "hum_secado")
+
+    def test_parse_topic_ph_suelo(self) -> None:
+        lote, tipo = _parse_topic("cacao/finca/5/lote/8/ph_suelo")
+        self.assertEqual(lote, 8)
+        self.assertEqual(tipo, "ph_suelo")
 
 
 class SensorDataTests(TestCase):
@@ -64,30 +86,3 @@ class SensorDataTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         tipos = {row["tipo"] for row in resp.json()}
         self.assertIn("temp_suelo", tipos)
-=======
-"""Unit tests for IoT app — MQTT topic parsing."""
-
-
-def _parse_topic(topic: str):
-    # cacao/finca/<finca>/lote/<lote>/<tipo>
-    parts = topic.split("/")
-    return int(parts[4]), parts[5]
-
-
-def test_parse_topic_basic():
-    lote, tipo = _parse_topic("cacao/finca/1/lote/2/temp_suelo")
-    assert lote == 2
-    assert tipo == "temp_suelo"
-
-
-def test_parse_topic_hum_secado():
-    lote, tipo = _parse_topic("cacao/finca/3/lote/7/hum_secado")
-    assert lote == 7
-    assert tipo == "hum_secado"
-
-
-def test_parse_topic_ph_suelo():
-    lote, tipo = _parse_topic("cacao/finca/5/lote/8/ph_suelo")
-    assert lote == 8
-    assert tipo == "ph_suelo"
->>>>>>> origin/feat/mqtt-mcp

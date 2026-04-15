@@ -85,19 +85,31 @@ ASGI_APPLICATION = "config.asgi.application"
 # -----------------------------------------------------------------------------
 # Database (Supabase PostgreSQL)
 # -----------------------------------------------------------------------------
+import sys as _sys
+
+_IS_TESTING = "test" in _sys.argv or "pytest" in _sys.argv[0]
+
 DATABASE_URL = config("DATABASE_URL", default="")
-if not DATABASE_URL:
+if not DATABASE_URL and not _IS_TESTING:
     raise RuntimeError(
         "DATABASE_URL no está definido. CacaoTrace requiere Supabase Postgres."
     )
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=60,
-        ssl_require=True,
-    )
-}
+if _IS_TESTING:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
+    }
+else:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=60,
+            ssl_require=True,
+        )
+    }
 
 # -----------------------------------------------------------------------------
 # Auth
