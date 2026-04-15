@@ -1,25 +1,19 @@
 # ===================================================================
-# MCP Server Dockerfile - FastMCP Server
+# MCP Server Dockerfile — FastMCP (8765) + Chat FastAPI (8766)
 # ===================================================================
 FROM python:3.12-slim AS development
 WORKDIR /app
 
-# Install uv
 RUN pip install uv
 
-# Copy all source first so hatchling can find README.md during build
 COPY mcp-server/ ./
 
-# Install dependencies (no-dev for security)
-RUN uv sync --frozen --no-dev
+RUN uv sync --no-dev || uv sync
 
-# Set PATH so venv Python/packages take precedence over system Python
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Expose port
-EXPOSE 8001
+EXPOSE 8765 8766
 
-# Run MCP server
 CMD ["python", "-m", "mcp_server"]
 
 # ===================================================================
@@ -30,9 +24,9 @@ WORKDIR /app
 
 RUN pip install uv
 COPY mcp-server/ ./
-RUN uv sync --frozen --no-dev
+RUN uv sync --no-dev || uv sync
 
 ENV PATH="/app/.venv/bin:$PATH"
 
-EXPOSE 8001
+EXPOSE 8765 8766
 CMD ["python", "-m", "mcp_server"]

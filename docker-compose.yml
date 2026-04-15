@@ -160,7 +160,8 @@ services:
     environment:
       - VITE_API_URL=http://localhost:8000
       - VITE_WS_URL=ws://localhost:8000
-      - VITE_MCP_URL=http://localhost:8001
+      - VITE_MCP_URL=http://localhost:8765
+      - VITE_CHAT_URL=http://localhost:8766
     depends_on:
       - backend
     logging:
@@ -182,22 +183,24 @@ services:
     volumes:
       - ./mcp-server:/app
     ports:
-      - "8001:8001"
+      - "8765:8765"   # FastMCP streamable-http
+      - "8766:8766"   # /chat FastAPI
     networks:
       - cacaotrace-net
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      - MCP_SERVER_PORT=8001
-      - DATABASE_URL=postgres://manufactura:cacaotrace_dev_password@postgres:5432/cacaotrace_dev
-      - MQTT_BROKER_URL=mqtt://manufactura:manufactura123@mosquitto:1883
-      - MQTT_BROKER_USERNAME=manufactura
-      - MQTT_BROKER_PASSWORD=manufactura123
+      - MCP_PORT=8765
+      - CHAT_PORT=8766
+      - API_URL=http://backend:8000
+      - MCP_API_TOKEN=${MCP_API_TOKEN:-}
+      - LLM_PROVIDER=${LLM_PROVIDER:-stub}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - PYTHONUNBUFFERED=1
-    command: ["python", "-m", "uvicorn", "mcp_server.server:app", "--host", "0.0.0.0", "--port", "8001"]
+    command: ["python", "-m", "mcp_server"]
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8001/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8766/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -209,7 +212,43 @@ services:
         max-file: "5"
 
   # ==========================================================================
-  # Simulator - MQTT Data Simulator (Optional)
+  # MQTT Worker — Django management command that ingests cacao/# into Supabase
+  # ==========================================================================
+  mqtt-worker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.backend
+      target: development
+    container_name: cacaotrace-mqtt-worker
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+    networks:
+      - cacaotrace-net
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.dev
+      - DATABASE_URL=${DATABASE_URL:-}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production-minimum-50-characters-long}
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,host.docker.internal,backend
+      - MQTT_BROKER_HOST=mosquitto
+      - MQTT_BROKER_PORT=1883
+      - MQTT_BROKER_USERNAME=${MQTT_BROKER_USERNAME:-}
+      - MQTT_BROKER_PASSWORD=${MQTT_BROKER_PASSWORD:-}
+      - PYTHONUNBUFFERED=1
+    command: python manage.py mqtt_ingest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================================
+  # Simulator — MQTT Data Simulator (always on in dev)
   # ==========================================================================
   simulator:
     build:
@@ -217,20 +256,19 @@ services:
       dockerfile: ./Dockerfile.sim
       target: development
     container_name: cacaotrace-simulator
-    profiles:
-      - simulator  # Enable with: docker compose --profile simulator up
-    restart: "no"
+    restart: unless-stopped
     networks:
       - cacaotrace-net
     depends_on:
       mosquitto:
         condition: service_healthy
     environment:
-      - MQTT_BROKER_URL=mqtt://manufactura:manufactura123@mosquitto:1883
-      - MQTT_BROKER_USERNAME=manufactura
-      - MQTT_BROKER_PASSWORD=manufactura123
-      - SIM_TENANT_ID=trebol
-      - SIM_SPEED_MULTIPLIER=1
+      - MQTT_BROKER_HOST=mosquitto
+      - MQTT_BROKER_PORT=1883
+      - MQTT_BROKER_USERNAME=${MQTT_BROKER_USERNAME:-}
+      - MQTT_BROKER_PASSWORD=${MQTT_BROKER_PASSWORD:-}
+      - SIM_SPEED=${SIM_SPEED:-1}
+      - PYTHONUNBUFFERED=1
     logging:
       driver: "json-file"
       options:
