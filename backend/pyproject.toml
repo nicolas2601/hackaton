@@ -1,0 +1,100 @@
+[project]
+name = "manufactura-backend"
+version = "0.1.0"
+description = "Backend para Manufactura Santander 4.0"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.1,<6.0",
+    "djangorestframework>=3.15.0",
+    "djangorestframework-simplejwt>=5.3.0",
+    "django-cors-headers>=4.4.0",
+    "channels>=4.1.0",
+    "channels-redis>=4.2.0",
+    "daphne>=4.1.0",
+    "aiomqtt>=2.0.0",
+    "psycopg>=3.2.0",
+    "psycopg[binary]>=3.2.0",
+    "gunicorn>=23.0.0",
+    "uvicorn[standard]>=0.32.0",
+    "redis>=5.2.0",
+    "dj-database-url>=2.2.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.9.0",
+    "structlog>=24.4.0",
+    "django-filter>=25.1.0",
+    "drf-spectacular>=0.27.0",
+    "pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-django>=4.9.0",
+    "pytest-asyncio>=0.24.0",
+    "factory-boy>=3.3.0",
+    "ruff>=0.7.0",
+    "black>=24.8.0",
+    "mypy>=1.13.0",
+    "django-stubs>=5.1.0",
+    "djangorestframework-stubs>=3.15.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.ruff_cache
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "UP",    # pyupgrade
+    "RUF",   # ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long (handled by black)
+    "B008",   # do not perform function calls in argument defaults
+    "C901",   # too complex
+]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["test_*.py", "*_test.py"]
+asyncio_mode = "auto"
+addopts = "-v --tb=short"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/manufactura"]

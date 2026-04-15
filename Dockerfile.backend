@@ -1,0 +1,87 @@
+# ===================================================================
+# Stage 1: Builder - Dependencies
+# ===================================================================
+FROM python:3.12-slim-bookworm AS builder
+
+# Install uv for fast package management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+WORKDIR /app
+
+# Copy dependency files first for better layer caching
+COPY backend/pyproject.toml backend/uv.lock* ./
+
+# Install Python dependencies
+RUN uv sync --frozen --no-install-project --no-dev
+
+# ===================================================================
+# Stage 2: Development
+# ===================================================================
+FROM python:3.12-slim-bookworm AS development
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy virtual environment from builder
+COPY --from=builder /app/.venv /app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Copy source code
+COPY backend/ /app/
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')" || exit 1
+
+# Default command
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# ===================================================================
+# Stage 3: Production
+# ===================================================================
+FROM python:3.12-slim-bookworm AS production
+
+# Install uv and runtime deps
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy lockfile and install ALL dependencies (including dev for management commands)
+COPY backend/pyproject.toml backend/uv.lock* ./
+RUN uv sync --frozen --no-install-project
+
+# Copy source code
+COPY backend/ /app/
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
+# Environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DJANGO_SETTINGS_MODULE=config.settings.production
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8000/health/ || exit 1
+
+# Run with gunicorn + uvicorn workers for async support
+CMD ["sh", "-c", "uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --workers 2"]

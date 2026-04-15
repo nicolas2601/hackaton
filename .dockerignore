@@ -1,0 +1,75 @@
+# ===================================================================
+# Global .dockerignore - applies to all Docker builds
+# ===================================================================
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+README*
+LICENSE
+CHANGELOG*
+docs/
+CONTRIBUTING.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env.local
+.env.*.local
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+*.whl
+
+# Logs
+*.log
+logs/
+
+# Coolify and deployment
+docker-compose.prod.yml
+.dockerignore
+
+# Local development files
+.env
+.env.local
+.env.development
+
+# Mosquitto data (regenerated on container start)
+mosquitto/
+
+# Database files
+*.sqlite3
+*.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
