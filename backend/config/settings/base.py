@@ -186,6 +186,14 @@ CORS_ALLOWED_ORIGINS = config(
 CORS_ALLOW_CREDENTIALS = True
 
 # -----------------------------------------------------------------------------
+# MQTT (aiomqtt ingest worker)
+# -----------------------------------------------------------------------------
+MQTT_BROKER_HOST = config("MQTT_BROKER_HOST", default="mosquitto")
+MQTT_BROKER_PORT = config("MQTT_BROKER_PORT", default=1883, cast=int)
+MQTT_BROKER_USERNAME = config("MQTT_BROKER_USERNAME", default="")
+MQTT_BROKER_PASSWORD = config("MQTT_BROKER_PASSWORD", default="")
+
+# -----------------------------------------------------------------------------
 # Logging
 # -----------------------------------------------------------------------------
 LOGGING = {
